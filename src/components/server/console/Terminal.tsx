@@ -36,9 +36,10 @@ const TerminalProps: ITerminalOptions = {
     fontSize: 14,
     fontFamily: font.style.fontFamily,
     theme: theme,
+    scrollback: 0
 }
 
-export default function Terminal() {
+export default function Terminal({ data }: { data?: string[] }) {
     const ref = useRef<HTMLDivElement>(null);
     const [terminal, setTerminal] = useState<XTerminal | null>(null);
     useEffect(() => {
@@ -61,6 +62,16 @@ export default function Terminal() {
             terminal.writeln('Welcome to the terminal!');
         }
     }, [terminal]);
+
+    useEffect(() => {
+        if (data && data.length > 0) {
+            if (terminal) {
+                for (const ln of data) {
+                    terminal.writeln(ln)
+                }
+            }
+        }
+    }, [data, terminal])
 
     return (
         <div ref={ref} className={'h-full w-full'} />

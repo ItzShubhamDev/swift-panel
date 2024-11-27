@@ -58,10 +58,7 @@ export default function Page({
                 Upload
               </button>
               <CreateNew type="folder" path={name.join("/")} />
-              <button className="px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                New File
-              </button>
+              <CreateNew type="file" path={name.join("/")} />
             </div>
           </div>
           <div className="mt-2 flex items-center text-sm text-gray-600">

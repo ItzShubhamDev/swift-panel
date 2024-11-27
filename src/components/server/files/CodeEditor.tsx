@@ -1,5 +1,8 @@
+"use client";
+
 import Editor from "@monaco-editor/react";
-import { type editor } from "monaco-editor";
+import { languages, type editor as IEditor } from "monaco-editor";
+import { useEffect, useState } from "react";
 
 type Monaco =
   typeof import("e:/Projects/swiftpanel/node_modules/monaco-editor/esm/vs/editor/editor.api");
@@ -7,12 +10,19 @@ type Monaco =
 export default function CodeEditor({
   value,
   filename,
+  onChange,
+  language,
 }: {
   value: string;
   filename: string;
+  onChange: (value?: string) => void;
+  language?: string;
 }) {
+  const [editor, setEditor] = useState<IEditor.IStandaloneCodeEditor>();
+  const [monaco, setMonaco] = useState<Monaco>();
+
   const handleEditorDidMount = (
-    editor: editor.IStandaloneCodeEditor,
+    editor: IEditor.IStandaloneCodeEditor,
     monaco: Monaco
   ) => {
     monaco.editor.defineTheme("dark", {
@@ -30,7 +40,14 @@ export default function CodeEditor({
       monaco.Uri.file(filename)
     );
     editor.setModel(model);
+    setEditor(editor);
+    setMonaco(monaco);
   };
+
+  useEffect(() => {
+    if (!editor || !monaco) return;
+    monaco.editor.setModelLanguage(editor.getModel()!, language || "plaintext");
+  }, [language]);
   return (
     <div className="w-full h-full">
       <Editor
@@ -38,6 +55,7 @@ export default function CodeEditor({
         defaultLanguage="javascript"
         defaultValue={value}
         onMount={handleEditorDidMount}
+        onChange={onChange}
       />
     </div>
   );

@@ -29,10 +29,18 @@ export default function Page({
     });
   }, [name]);
 
+  const handleChange = (value?: string) => {
+    console.log(value);
+  };
+
   return (
     <>
       {name && name.length > 0 && (
-        <CodeEditor value={content} filename={name.split("/").pop()!} />
+        <CodeEditor
+          value={content}
+          filename={name.split("/").pop()!}
+          onChange={handleChange}
+        />
       )}
     </>
   );

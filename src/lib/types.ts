@@ -25,3 +25,12 @@ export interface FileObject {
   isArchiveType: () => boolean;
   isEditable: () => boolean;
 }
+
+export interface Language {
+  id: string;
+  extensions?: string[];
+  aliases: string[];
+  mimetypes?: string[];
+  filenames?: string[];
+  firstLine?: string;
+}

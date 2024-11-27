@@ -19,7 +19,8 @@ export default function CreateNew({
 
   function newFile() {
     if (type === "file") {
-      router.push(`/server/1/files/new/${path}`);
+      console.log(path);
+      router.push(`/server/1/files/new`);
     } else {
       setModalOpen(true);
     }

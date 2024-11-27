@@ -1,4 +1,4 @@
-export function formatBytes(bytes: number, unit: "KB" | "MB" | "GB") {
+function formatBytes(bytes: number, unit: "KB" | "MB" | "GB") {
   if (bytes < 0) bytes = -bytes;
   if (unit === "KB") {
     return parseFloat((bytes / 1024).toFixed(2));
@@ -11,7 +11,7 @@ export function formatBytes(bytes: number, unit: "KB" | "MB" | "GB") {
   }
 }
 
-export function formatDuration(ms: number) {
+function formatDuration(ms: number) {
   if (ms < 0) ms = -ms;
 
   const time = {
@@ -26,3 +26,9 @@ export function formatDuration(ms: number) {
     .map((val) => val[1] + val[0])
     .join(" ");
 }
+
+function formatName(name: string) {
+  return name[0].toUpperCase() + name.slice(1).toLowerCase();
+}
+
+export { formatBytes, formatDuration, formatName };

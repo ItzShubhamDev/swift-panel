@@ -8,7 +8,7 @@ import {
   Clock
 } from 'lucide-react';
 
-export default function Dashboard() {
+export default function Page() {
   const servers = [
     {
       id: 1,

@@ -1,79 +1,55 @@
-'use client';
+"use client";
+import { signToken } from "@/lib/wings/jwt";
+import { useEffect, useRef, useState } from "react";
 
-import { ITerminalOptions, ITheme, Terminal as XTerminal } from '@xterm/xterm';
-import { FitAddon } from '@xterm/addon-fit';
-import '@xterm/xterm/css/xterm.css';
-import { useEffect, useRef, useState } from 'react';
-import { Ubuntu_Mono } from 'next/font/google';
+export default function Terminal({
+  history,
+  sendCommand,
+}: {
+  history: string[];
+  sendCommand: (command: string) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("");
 
-const font = Ubuntu_Mono({ weight: '400', subsets: ['latin'] });
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollTop = ref.current.scrollHeight;
+    }
+  }, [history]);
 
-const theme: ITheme = {
-    background: '#484f52',
-    cursor: 'transparent',
-    black: '#484f52',
-    red: '#E54B4B',
-    green: '#9ECE58',
-    yellow: '#FAED70',
-    blue: '#396FE2',
-    magenta: '#BB80B3',
-    cyan: '#2DDAFD',
-    white: '#d0d0d0',
-    brightBlack: 'rgba(255, 255, 255, 0.2)',
-    brightRed: '#FF5370',
-    brightGreen: '#C3E88D',
-    brightYellow: '#FFCB6B',
-    brightBlue: '#82AAFF',
-    brightMagenta: '#C792EA',
-    brightCyan: '#89DDFF',
-    brightWhite: '#ffffff',
-};
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim()) {
+      sendCommand(input);
+      setInput("");
+    }
+  };
 
-const TerminalProps: ITerminalOptions = {
-    disableStdin: true,
-    cursorStyle: 'underline',
-    allowTransparency: true,
-    fontSize: 14,
-    fontFamily: font.style.fontFamily,
-    theme: theme,
-    scrollback: 0
-}
-
-export default function Terminal({ data }: { data?: string[] }) {
-    const ref = useRef<HTMLDivElement>(null);
-    const [terminal, setTerminal] = useState<XTerminal | null>(null);
-    useEffect(() => {
-        const T = new XTerminal(TerminalProps);
-        setTerminal(T);
-
-        return () => {
-            if (T) {
-                T.dispose();
-            }
-        }
-    }, [TerminalProps]);
-
-    useEffect(() => {
-        if (terminal) {
-            const fitAddon = new FitAddon();
-            terminal.loadAddon(fitAddon);
-            terminal.open(ref.current!);
-            fitAddon.fit();
-            terminal.writeln('Welcome to the terminal!');
-        }
-    }, [terminal]);
-
-    useEffect(() => {
-        if (data && data.length > 0) {
-            if (terminal) {
-                for (const ln of data) {
-                    terminal.writeln(ln)
-                }
-            }
-        }
-    }, [data, terminal])
-
-    return (
-        <div ref={ref} className={'h-full w-full'} />
-    )
+  return (
+    <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden flex flex-col h-[80vh] text-gray-200 font-mono w-full">
+      <div ref={ref} className="flex-1 p-4 overflow-y-auto bg-gray-800">
+        {history.map((line, i) => (
+          <div
+            key={i}
+            dangerouslySetInnerHTML={{
+              __html: line.replace(/color:#00A/gi, "color:#008000"),
+            }}
+          />
+        ))}
+      </div>
+      <div className="border-t border-gray-700 bg-gray-800 p-4 shrink-0">
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          <span className="text-gray-200">{">>"}</span>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="flex-1 bg-transparent border-none outline-none text-gray-200 focus:ring-0"
+            autoFocus
+          />
+        </form>
+      </div>
+    </div>
+  );
 }
